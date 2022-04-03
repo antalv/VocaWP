@@ -1,0 +1,200 @@
+.voca-owerlay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.voca-modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 995999;
+}
+.voca-modal h2 {
+  text-align: center;
+}
+.voca-modal__inner {
+  background: #FFFFFF;
+  width: 500px;
+  position: relative;
+  padding: 20px;
+}
+.voca-modal__close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  width: 25px;
+  height: 25px;
+  cursor: pointer;
+}
+.voca-modal__close:before, .voca-modal__close:after {
+  content: "";
+  position: absolute;
+  top: 12px;
+  background: #000000;
+  height: 1px;
+  width: 25px;
+  display: flex;
+}
+.voca-modal__close:before {
+  transform: rotate(45deg);
+}
+.voca-modal__close:after {
+  transform: rotate(-45deg);
+}
+
+.voca-preloader {
+  background: url(../img/preloader.gif) no-repeat center;
+  background-size: 60px;
+  width: 60px;
+  height: 60px;
+  margin: 0 auto;
+  display: flex;
+}
+
+.voca-preloader.voca-preloader__white {
+  background: url(../img/preloader-white.gif) no-repeat center;
+}
+
+.voca-cats__add, .voca-items__add {
+  display: flex;
+  align-items: flex-end;
+  cursor: pointer;
+  border-top: 1px solid #c4c4c4;
+  padding-top: 15px;
+  margin-top: 15px;
+}
+.voca-cats__add:before, .voca-items__add:before {
+  content: "";
+  background: url(../img/add.svg) no-repeat center;
+  background-size: 20px;
+  display: flex;
+  width: 20px;
+  height: 20px;
+  margin-right: 15px;
+}
+
+.voca-cats ul {
+  padding-left: 0;
+}
+.voca-cats__item {
+  display: flex;
+  justify-content: space-between;
+  min-height: 20px;
+  font-weight: 500;
+  padding-bottom: 10px;
+}
+.voca-cats__item > span {
+  cursor: pointer;
+}
+.voca-cats__item .voca-item__buttons {
+  display: none;
+}
+.voca-cats__item:hover .voca-item__buttons {
+  display: flex;
+}
+.voca-cats__item:hover .voca-item__buttons > div {
+  opacity: 0.3;
+}
+.voca-cats__item:hover .voca-item__buttons > div:hover {
+  opacity: 1;
+}
+
+.voca-cats__add-form, .voca-items__add-form {
+  display: flex;
+  flex-direction: column;
+}
+.voca-cats__add-form input, .voca-cats__add-form textarea, .voca-cats__add-form select, .voca-items__add-form input, .voca-items__add-form textarea, .voca-items__add-form select {
+  margin-bottom: 20px;
+  border: 1px solid #c4c4c4;
+  border-radius: 0;
+  padding: 15px;
+}
+.voca-cats__add-form button, .voca-items__add-form button {
+  background: #000000;
+  border-radius: 0;
+  border: none;
+  color: #ffffff;
+  padding: 15px;
+  cursor: pointer;
+}
+.voca-cats__add-form button:hover, .voca-items__add-form button:hover {
+  opacity: 0.8;
+}
+
+span.voca-voice {
+  color: #555555;
+  font-size: 14px;
+}
+
+.voca-items {
+  border-top: 1px solid #c4c4c4;
+  padding-top: 10px;
+  margin-top: 30px;
+}
+
+.voca-item {
+  display: flex;
+  padding: 10px 0;
+  justify-content: space-between;
+}
+.voca-item__play {
+  background: url(../img/play.svg) no-repeat center;
+  width: 20px;
+  height: 20px;
+  background-size: 20px;
+  display: flex;
+  margin-right: 10px;
+  cursor: pointer;
+}
+.voca-item__content {
+  display: flex;
+}
+.voca-item__edit, .voca-item__remove {
+  width: 20px;
+  height: 20px;
+  background-size: 20px !important;
+  display: flex;
+  cursor: pointer;
+}
+.voca-item__edit {
+  background: url(../img/edit.svg) no-repeat center;
+  padding: 0 10px;
+}
+.voca-item__remove {
+  background: url(../img/remove.svg) no-repeat center;
+}
+.voca-item__text {
+  margin-right: 10px;
+  font-weight: 600;
+}
+.voca-item__translate {
+  color: #777777;
+}
+.voca-item__buttons {
+  display: flex;
+  margin-left: 50px;
+  display: none;
+}
+.voca-item:hover .voca-item__buttons {
+  display: flex;
+}
+.voca-item:hover .voca-item__buttons > div {
+  opacity: 0.3;
+}
+.voca-item:hover .voca-item__buttons > div:hover {
+  opacity: 1;
+}
+
+/*# sourceMappingURL=style.css.map */

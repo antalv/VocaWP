@@ -1,0 +1,159 @@
+.voca-owerlay
+  display: flex
+  justify-content: center
+  align-items: center
+  height: 100%
+  width: 100%
+  position: absolute
+  top: 0
+  left: 0
+  background: rgba(0, 0, 0, 0.6)
+
+.voca-modal
+  display: flex
+  justify-content: center
+  align-items: center
+  height: 100vh
+  position: absolute
+  top: 0
+  left: 0
+  width: 100%
+  z-index: 995999
+  h2
+    text-align: center
+  &__inner
+    background: #FFFFFF
+    width: 500px
+    position: relative
+    padding: 20px
+  &__close
+    position: absolute
+    top: 15px
+    right: 15px
+    width: 25px
+    height: 25px
+    cursor: pointer
+    &:before, &:after
+      content: ''
+      position: absolute
+      top: 12px
+      background: #000000
+      height: 1px
+      width: 25px
+      display: flex
+    &:before
+      transform: rotate(45deg)
+    &:after
+      transform: rotate(-45deg)
+.voca-preloader
+  background: url(../img/preloader.gif) no-repeat center
+  background-size: 60px
+  width: 60px
+  height: 60px
+  margin: 0 auto
+  display: flex
+.voca-preloader.voca-preloader__white
+  background: url(../img/preloader-white.gif) no-repeat center
+.voca-cats, .voca-items
+  &__add
+    display: flex
+    align-items: flex-end
+    cursor: pointer
+    border-top: 1px solid #c4c4c4
+    padding-top: 15px
+    margin-top: 15px
+    &:before
+      content: ''
+      background: url(../img/add.svg) no-repeat center
+      background-size: 20px
+      display: flex
+      width: 20px
+      height: 20px
+      margin-right: 15px
+.voca-cats
+  ul
+    padding-left: 0
+  &__item
+    display: flex
+    justify-content: space-between
+    min-height: 20px
+    font-weight: 500
+    padding-bottom: 10px
+    > span
+      cursor: pointer
+    .voca-item__buttons
+      display: none
+    &:hover
+      .voca-item__buttons
+        display: flex
+        > div
+            opacity: 0.3
+            &:hover
+              opacity: 1
+.voca-cats, .voca-items
+  &__add-form
+    display: flex
+    flex-direction: column
+    input, textarea, select
+      margin-bottom: 20px
+      border: 1px solid #c4c4c4
+      border-radius: 0
+      padding: 15px
+    button
+      background: #000000
+      border-radius: 0
+      border: none
+      color: #ffffff
+      padding: 15px
+      cursor: pointer
+      &:hover
+        opacity: 0.8
+span.voca-voice
+  color: #555555
+  font-size: 14px
+.voca-items
+  border-top: 1px solid #c4c4c4
+  padding-top: 10px
+  margin-top: 30px
+.voca-item
+  display: flex
+  padding: 10px 0
+  justify-content: space-between
+  &__play
+    background: url(../img/play.svg) no-repeat center
+    width: 20px
+    height: 20px
+    background-size: 20px
+    display: flex
+    margin-right: 10px
+    cursor: pointer
+  &__content
+    display: flex
+
+  &__edit, &__remove
+    width: 20px
+    height: 20px
+    background-size: 20px !important
+    display: flex
+    cursor: pointer
+  &__edit
+    background: url(../img/edit.svg) no-repeat center
+    padding: 0 10px
+  &__remove
+    background: url(../img/remove.svg) no-repeat center
+  &__text
+    margin-right: 10px
+    font-weight: 600
+  &__translate
+    color: #777777
+  &__buttons
+    display: flex
+    margin-left: 50px
+    display: none
+  &:hover
+    .voca-item__buttons
+      display: flex
+      > div
+        opacity: 0.3
+        &:hover
+          opacity: 1
