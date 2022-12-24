@@ -26,15 +26,15 @@ class VocaWP{
         add_action('init', array($this, 'VocaWP_post_types'));
         add_action('wp_enqueue_scripts', array($this,'enqueue_VocaWP_scripts'));
         add_action('wp_ajax_voca_cats', array($this, 'voca_cats_inner'));
-        add_action('wp_ajax_voca__show_items', array($this, 'voca__show_items_function'));
+        add_action('wp_ajax_voca__show_items', array($this, 'voca__show_items'));
         add_action('wp_ajax_voca__add_cat', array($this, 'voca__add_cat'));
         add_action('wp_ajax_voca__add_item', array($this, 'voca__add_item'));
         add_action('wp_ajax_voca__add_cat_function', array($this, 'voca__add_cat_function'));
         add_action('wp_ajax_voca__remove_cat_function', array($this, 'voca__remove_cat_function'));
         add_action('wp_ajax_voca__add_item_function', array($this, 'voca__add_item_function'));
         add_action('wp_ajax_voca__remove_item_function', array($this, 'voca__remove_item_function'));
-        add_action('wp_ajax_voca__update_item_function', array($this, 'voca__update_function'));
         add_action('wp_ajax_voca__update_item', array($this, 'voca__update'));
+        add_action('wp_ajax_voca__update_cat', array($this, 'voca__update_cat'));
     }
 
     static function activate(){
@@ -125,7 +125,7 @@ class VocaWP{
         echo '<div class="voca-cat"></div>';
     }
 
-    public function voca__show_items_function(){
+    public function voca__show_items(){
         $args = array(
             'post_type' => 'voca',
             'taxonomy' => 'voca_tax',
@@ -185,8 +185,10 @@ class VocaWP{
             'orderby' => 'id'
         );
         $terms = get_terms('voca_tax', $args);
-              foreach ($terms as $term){ ?>
-                  <li class="voca-cats__item" data-id="<?php echo $term->term_id ?>" data-slug="<?php echo $term->slug ?>">
+              foreach ($terms as $term){
+                  $termVoice = get_term_meta($term->term_id, 'voice');
+                  ?>
+                  <li class="voca-cats__item" data-id="<?php echo $term->term_id ?>" data-slug="<?php echo $term->slug ?>" data-voice="<?php echo $termVoice[0] ?>">
                       <span><?php echo $term->name ?></span>
                       <div class="voca-item__buttons">
                           <div class="voca-item__edit"></div>
@@ -206,15 +208,30 @@ class VocaWP{
                 <input type="text" class="voca__cat-title" placeholder="Title">
                 <select name="voca-voice" id="voca-voice"></select>
                 <textarea name="" class="voca__cat-desc" id="" cols="30" rows="10" placeholder="Description"></textarea>
-                <button type="submit">Add cat</button>
+                <button type="submit" data-func="add">Add cat</button>
         </div>
         <?php wp_die();
     }
-
+    public function voca__update_cat() {
+        $catId = $_POST['id'];
+        $catObj = get_term_by('id', $catId, 'voca_tax');
+        $catTitle = $catObj->name;
+        $catDesc = $catObj->description ?>
+        <div class="voca-cats__add-form">
+            <h2>Update cat</h2>
+            <input type="text" class="voca__cat-title" placeholder="Title"  value="<?php echo $catTitle?>">
+            <select name="voca-voice" id="voca-voice"></select>
+            <textarea name="" class="voca__cat-desc" id="" cols="30" rows="10" placeholder="Description"><?php echo $catDesc ?></textarea>
+            <button type="submit" data-func="update" data-id="<?php echo $catId ?>">Update cat</button>
+        </div>
+        <?php wp_die();
+    }
     public function voca__add_cat_function() {
+        $term_id = $_POST['id'];
         $term_title = $_POST['title'];
         $term_desc = $_POST['desc'];
         $term_voice = $_POST['voice'];
+        $cat_function = $_POST['function'];
         $current_user = wp_get_current_user();
         $user_nickname = $current_user->nickname;
         $parentTerm = term_exists( $user_nickname, 'voca_tax' );
@@ -227,15 +244,40 @@ class VocaWP{
             'slug'        => $user_nickname . '-' . $term_title,
             'parent'      => $parentTermID,
             'description' => $term_desc,
+            'name' => $term_title
         );
-        $term_insert = wp_insert_term($term_title, 'voca_tax', $args);
-        $term_id = $term_insert['term_id'];
-        add_term_meta($term_id, 'voice', $term_voice);
+
+        if($cat_function == 'update') {
+            wp_update_term($term_id, 'voca_tax', $args);
+            update_term_meta($term_id, 'voice', $term_voice);
+        }
+        else{
+            $term_insert = wp_insert_term($term_title, 'voca_tax', $args);
+            $term_id = $term_insert['term_id'];
+            add_term_meta($term_id, 'voice', $term_voice);
+        }
+
+        
         wp_die();
     }
 
     public function voca__remove_cat_function(){
         $termID = $_POST['id'];
+        $args = array(
+            'post_type' => 'voca',
+            'numberposts' => -1,
+            'tax_query' => array(
+                array(
+                    'taxonomy' => 'voca_tax',
+                    'field' => 'term_id',
+                    'terms' => $termID,
+                )
+            )
+        );
+        $termPosts = get_posts($args);
+        foreach ($termPosts as $post){
+            wp_delete_post( $post->ID, true );
+        }
         wp_delete_term($termID, 'voca_tax');
     }
 
@@ -248,7 +290,23 @@ class VocaWP{
             <h2>Add item</h2>
             <input type="text" class="voca__item-text" placeholder="Text">
             <input type="text" class="voca__item-translate" placeholder="Translate">
-            <button data-cat="<?php echo $dataCat ?>" data-slug="<?php echo $dataCatSlug ?>" >Add item</button>
+            <button data-func="add" data-id="0" data-cat="<?php echo $dataCat ?>" data-slug="<?php echo $dataCatSlug ?>" >Add item</button>
+        </div>
+        <?php wp_die();
+    }
+    public function voca__update() {
+        $dataCat = $_POST['cat'];
+        $dataItemText = $_POST['text'];
+        $dataItemTranslate = $_POST['translate'];
+        $dataItemId = $_POST['id'];
+        $dataCatTerm = get_term_by('id', $dataCat, 'voca_tax');
+        $dataCatSlug = $dataCatTerm->slug;
+        ?>
+        <div class="voca-items__add-form">
+            <h2>Update item</h2>
+            <input type="text" class="voca__item-text" placeholder="Text" value="<?php echo $dataItemText ?>">
+            <input type="text" class="voca__item-translate" placeholder="Translate" value="<?php echo $dataItemTranslate ?>">
+            <button data-func="update" data-id="<?php echo $dataItemId ?>" data-cat="<?php echo $dataCat ?>" data-slug="<?php echo $dataCatSlug ?>" >Update item</button>
         </div>
         <?php wp_die();
     }
@@ -257,6 +315,8 @@ class VocaWP{
         $post_text = $_POST['text'];
         $post_translate = $_POST['translate'];
         $post_cat = $_POST['cat'];
+        $post_function = $_POST['function'];
+        $post_id = $_POST['id'];
         $args = array(
             'post_title' => $post_text,
             'post_status' => 'publish',
@@ -267,7 +327,14 @@ class VocaWP{
                 'translate' => $post_translate
             ),
         );
-        wp_insert_post($args);
+
+        if($post_function == 'update'){
+            $args['ID'] = $post_id;
+            wp_update_post($args);
+        }
+        else{
+            wp_insert_post($args);
+        }
         wp_die();
     }
 
