@@ -26,6 +26,7 @@ jQuery(function($) {
             success: function (data) {
                 $('.voca-cats').html(data);
                 voca__remove_cat();
+                voca__update_cat();
                 voca__add_cat();
                 voca_cat_open();
             }
@@ -50,6 +51,7 @@ jQuery(function($) {
                         voca__voice();
                         voca__add_item();
                         voca__remove_item();
+                        voca__update_item();
                     }
                 });
             })
@@ -67,15 +69,11 @@ jQuery(function($) {
                     voca_owerlay();
                 },
                 success: function (data) {
-                    setTimeout(function () {
                         vocaModal();
                         $('.voca-modal__content').html(data);
-                        setTimeout(function(){
-                            populateVoiceList();
-                        }, 100);
+                        populateVoiceList();
                         voca__add_cat_function();
-                    }, 10)
-
+                  
                 }
             });
         });
@@ -91,24 +89,69 @@ jQuery(function($) {
                     voca_owerlay();
                 },
                 success: function (data) {
-                    setTimeout(function () {
                         vocaModal();
                         $('.voca-modal__content').html(data);
                         voca__add_item_function();
-                    }, 10)
                 }
             });
         });
     }
-
+    function voca__update_item() {
+        $('.voca-cat .voca-item').each(function() {
+            $(this).find('.voca-item__edit').click(function () {
+                let itemDataCat = $(this).parents('.voca-items').next().data('cat');
+                let text = $(this).parent().prev().find('.voca-item__text').html();
+                let translate = $(this).parent().prev().find('.voca-item__translate').html();
+                let itemDataId = $(this).parents('.voca-item').data('id');
+                $.ajax({
+                    url: ajax.url,
+                    data: {action: 'voca__update_item', text: text, translate: translate, cat: itemDataCat, id: itemDataId},
+                    type: 'POST',
+                    beforeSend: function (){
+                        voca_owerlay();
+                    },
+                    success: function (data) {
+                            vocaModal();
+                            $('.voca-modal__content').html(data);
+                            voca__add_item_function();
+                    }
+                });
+            })
+        })
+    }
+    function voca__update_cat() {
+        $('.voca-cats__item').each(function() {
+            $(this).find('.voca-item__edit').click(function () {
+                let vocaCatId = $(this).parents('.voca-cats__item').data('id');
+                let vocaVoice = $(this).parents('.voca-cats__item').data('voice');
+                $.ajax({
+                    url: ajax.url,
+                    data: {action: 'voca__update_cat', id: vocaCatId,},
+                    type: 'POST',
+                    beforeSend: function (){
+                        voca_owerlay();
+                    },
+                    success: function (data) {
+                        vocaModal();
+                        $('.voca-modal__content').html(data);
+                        populateVoiceList();
+                        $('#voca-voice').find(`option[data-name='${vocaVoice}']`).attr('selected','selected');
+                        voca__add_cat_function();
+                    }
+                });
+            })
+        })
+    }
     function voca__add_cat_function(){
         $('.voca-cats__add-form button').click(function(){
             let catTitle = $(this).parent().find('input.voca__cat-title').val();
             let catDesc = $(this).parent().find('textarea.voca__cat-desc').val();
             let catVoice = $(this).parent().find('select#voca-voice option:selected').data('name');
+            let catId = $(this).data('id');
+            let catFunction = $(this).data('func');
             $.ajax({
                 url: ajax.url,
-                data: {action: 'voca__add_cat_function', title: catTitle, desc: catDesc, voice: catVoice
+                data: {action: 'voca__add_cat_function', title: catTitle, desc: catDesc, voice: catVoice, function: catFunction, id: catId
                 },
                 type: 'POST',
                 success: function (data) {
@@ -125,6 +168,7 @@ jQuery(function($) {
                         success: function (data) {
                             $('.voca-cats').html(data);
                             voca__remove_cat();
+                            voca__update_cat();
                             voca_cat_open();
                         }
                     });
@@ -138,9 +182,11 @@ jQuery(function($) {
             let itemTranslate = $(this).parent().find('input.voca__item-translate').val();
             let itemCat = $(this).data('cat');
             let itemCatSlug = $(this).data('slug');
+            let itemFunction = $(this).data('func');
+            let itemId = $(this).data('id');
             $.ajax({
                 url: ajax.url,
-                data: {action: 'voca__add_item_function', text: itemTitle, translate: itemTranslate, cat: itemCat
+                data: {action: 'voca__add_item_function', text: itemTitle, translate: itemTranslate, cat: itemCat, function: itemFunction, id: itemId
                 },
                 type: 'POST',
                 success: function (data) {
@@ -159,6 +205,7 @@ jQuery(function($) {
                             $('.voca-cat').html(data);
                             voca__voice();
                             voca__add_item();
+                            voca__update_item();
                             voca__remove_item();
                         }
                     });
@@ -175,7 +222,7 @@ jQuery(function($) {
                     data: {action: 'voca__remove_cat_function', id: itemId},
                     type: 'POST',
                     success: function (data) {
-                        voca_cats();s
+                        voca_cats();
                         if($('.voca-cat .voca-items__add').data('cat') === itemId){
                             $('.voca-cat').html('');
                         }
@@ -191,7 +238,6 @@ jQuery(function($) {
             $(this).find('.voca-item__remove').click(function(){
                 let itemId = $(this).parents('.voca-item').data('id');
                 let itemCatSlug = $(this).parents('.voca-item').data('slug');
-                console.log(itemId);
                 $.ajax({
                     url: ajax.url,
                     data: {action: 'voca__remove_item_function', id: itemId},
@@ -212,6 +258,7 @@ jQuery(function($) {
                                 $('.voca-cat').html(data);
                                 voca__voice();
                                 voca__add_item();
+                                voca__update_item();
                                 voca__remove_item();
                             }
                         });
